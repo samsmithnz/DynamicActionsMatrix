@@ -23,4 +23,7 @@ jobs:
         cd src 
         $result = dotnet list package --outdated --format json
         write-host "Results!"
-        $result
+        if ($result.length -gt 40000)
+        {
+          write-host "Result is too large to be assigned to an environment variable. 
+        }

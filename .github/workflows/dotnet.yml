@@ -20,6 +20,6 @@ jobs:
     - name: Get outdated packages
       run: |
         cd src 
-        $result = dotnet list package --outdated --format json
+        $result=dotnet list package --outdated --format json
         write-host "Results!"
         $result

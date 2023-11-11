@@ -18,4 +18,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src
     - name: Get outdated packages
-      run: dotnet list package --outdated
+      run: |
+        cd src 
+        dotnet list package --outdated

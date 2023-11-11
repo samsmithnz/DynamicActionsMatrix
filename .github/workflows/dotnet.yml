@@ -18,8 +18,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src
     - name: Get outdated packages
+      shell: pwsh
       run: |
         cd src 
-        $result=dotnet list package --outdated --format json
+        $result = dotnet list package --outdated --format json
         write-host "Results!"
         $result

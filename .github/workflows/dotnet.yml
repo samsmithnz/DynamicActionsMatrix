@@ -26,7 +26,7 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Restore dependencies
-      run: dotnet restore src
+      run: dotnet restore repo2/src
     - name: Scan for NuGet packages needing action
       shell: pwsh
       run: |

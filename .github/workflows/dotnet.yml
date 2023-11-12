@@ -13,7 +13,7 @@ jobs:
       user: samsmithnz
     strategy:
       matrix:
-        repo: ['samsmithnz/RepoAutomationUnitTests'] #, 'samsmithnz/RepoAutomation', 'samsmithnz/RepoGovernance']
+        repo: ['samsmithnz/RepoAutomationUnitTests', 'samsmithnz/RepoAutomation', 'samsmithnz/RepoGovernance']
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -30,21 +30,49 @@ jobs:
       shell: pwsh
       run: |
         cd src 
-        $result = dotnet list package --outdated --format json
-        write-host "Results!"
-        write-host $result
-        if ($result.length -gt 40000)
+        $resultDeprecated = dotnet list package --deprecated --format jsonn
+        if ($resultDeprecated.length -gt 40000)
         {
-          write-host "Result is too large to be assigned to an environment variable."
+          write-host "Deprcated result is too large to be assigned to an environment variable."
+        }
+        $resultOutDated = dotnet list package --outdated --format jsonn
+        if ($resultOutDated.length -gt 40000)
+        {
+          write-host "Outdated result is too large to be assigned to an environment variable."
+        }
+        $resultVulnerable = dotnet list package --vulnerable --format json
+        if ($resultVulnerable.length -gt 40000)
+        {
+          write-host "Vulnerable result is too large to be assigned to an environment variable."
         }
         $user = "${{ env.user }}"
         $owner = "${{ matrix.repo }}".split('/')[0]
         $repo = "${{ matrix.repo }}".split('/')[1]
-        $NuGetPayload = @{
+        #Deprecated packages
+        $NuGetDeprecatedPayload = @{
           User = $user
           Owner = $owner
           Repo = $repo
-          JsonPayload = $result
+          JsonPayload = $resultDeprecated
+          PayloadType = "Deprecated"
+        } | ConvertTo-Json -Depth 5
+        Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetDeprecatedPayload
+        #Outdated packages
+        $NuGetOutdatedPayload = @{
+          User = $user
+          Owner = $owner
+          Repo = $repo
+          JsonPayload = $resultOutDated
           PayloadType = "Outdated"
         } | ConvertTo-Json -Depth 5
-        Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetPayload
+        Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetOutdatedPayload
+        #Vulnerable packages        
+        $NuGetVulnerablePayload = @{
+          User = $user
+          Owner = $owner
+          Repo = $repo
+          JsonPayload = $resultVulnerable
+          PayloadType = "Vulnerable"
+        } | ConvertTo-Json -Depth 5
+        Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetVulnerablePayload
+        

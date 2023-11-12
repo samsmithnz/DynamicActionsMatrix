@@ -24,7 +24,7 @@ jobs:
       shell: pwsh
       run: |
         cd src 
-        $result = dotnet list package --outdated #--format json
+        $result = dotnet list package --outdated --format json
         write-host "Results!"
         write-host $result
         if ($result.length -gt 40000)

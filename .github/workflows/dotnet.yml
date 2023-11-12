@@ -25,12 +25,11 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
-    - name: Restore dependencies
-      run: dotnet restore repo2/src
     - name: Scan for NuGet packages needing action
       shell: pwsh
       run: |
         cd repo2/src 
+        dotnet restore
         ls
         $resultDeprecated = dotnet list package --deprecated --format json
         if ($resultDeprecated.length -gt 40000)

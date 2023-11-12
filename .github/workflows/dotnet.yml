@@ -13,7 +13,7 @@ jobs:
       user: samsmithnz
     strategy:
       matrix:
-        repo: ['samsmithnz/RepoAutomationUnitTests', 'samsmithnz/RepoAutomation', 'samsmithnz/RepoGovernance']
+        repo: ['samsmithnz/RepoAutomationUnitTests'] #, 'samsmithnz/RepoAutomation', 'samsmithnz/RepoGovernance']
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -33,7 +33,11 @@ jobs:
         $resultDeprecated = dotnet list package --deprecated --format json
         if ($resultDeprecated.length -gt 40000)
         {
-          write-host "Deprcated result is too large to be assigned to an environment variable."
+          write-host "Deprecated result is too large to be assigned to an environment variable."
+        }
+        else 
+        {
+          write-host "Deprecated results found: " + $resultDeprecated
         }
         $resultOutDated = dotnet list package --outdated --format json
         if ($resultOutDated.length -gt 40000)

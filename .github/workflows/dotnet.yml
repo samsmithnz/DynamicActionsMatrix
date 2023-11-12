@@ -43,7 +43,7 @@ jobs:
           foreach ($project in ($resultDeprecated | ConvertFrom-Json).projects)
           {
             write-host "Scanning project"
-            write-host $project.path
+            write-host $project
             write-host $project.frameworks
             write-host $project.frameworks.Count
             $deprecatedCount += $project.frameworks.Count

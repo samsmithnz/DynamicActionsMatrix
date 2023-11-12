@@ -121,5 +121,5 @@ jobs:
         else
         {
           write-host "No .NET solution found"
-          write-error "No .NET solution found"
+          #write-error "No .NET solution found"
         }

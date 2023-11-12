@@ -15,8 +15,8 @@ jobs:
       matrix:
         repo: ['samsmithnz/AzurePipelinesToGitHubActionsConverter','samsmithnz/AzurePipelinesToGitHubActionsConverterWeb',
         'samsmithnz/CustomQueue','samsmithnz/Dependabot-Configuration-Builder','samsmithnz/DotNetCensus','samsmithnz/DSPTree',
-        'samsmithnz/FactorySim','samsmithnz/GitHubActionsDotNet','samsmithnz/MermaidDotNet','samsmithnz/PuzzleSolver',
-        'samsmithnz/RepoAutomation','samsmithnz/RepoAutomationUnitTests','samsmithnz/RepoGovernance','samsmithnz/ResearchTree',
+        'samsmithnz/FactorySim','samsmithnz/GitHubActionsDotNet','samsmithnz/MermaidDotNet',
+        'samsmithnz/RepoAutomation','samsmithnz/RepoAutomationUnitTests','samsmithnz/RepoGovernance',
         'samsmithnz/SamsFeatureFlags','samsmithnz/SatisfactoryTree','samsmithnz/SamsDotNetSonarCloudAction',
         'samsmithnz/TurnBasedEngine','SamSmithNZ-dotcom/SamSmithNZ.com','SamSmithNZ-dotcom/MandMCounter',
         'DeveloperMetrics/DevOpsMetrics','DeveloperMetrics/deployment-frequency','DeveloperMetrics/lead-time-for-changes']
@@ -131,7 +131,7 @@ jobs:
       user: samsmithnz
     strategy:
       matrix:
-        repo: ['samsmithnz/Sams2048']
+        repo: ['samsmithnz/PuzzleSolver','samsmithnz/ResearchTree','samsmithnz/Sams2048']
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3

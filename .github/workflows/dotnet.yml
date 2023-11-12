@@ -9,14 +9,16 @@ on:
 jobs:
   processRepos:
     name: Process repos
+    env:
+      user: samsmithnz
     strategy:
       matrix:
-        repo: ['samsmithnz/RepoAutomationUnitTests', 'samsmithnz/RepoAutomation', 'samsmithnz/RepoGovernance']
+        repo: ['samsmithnz/RepoAutomationUnitTests'] #, 'samsmithnz/RepoAutomation', 'samsmithnz/RepoGovernance']
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
       with:
-        repository: ${{ matrix.version }}
+        repository: ${{ matrix.repo }}
         token: ${{ secrets.PAT_TOKEN }}
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -24,7 +26,7 @@ jobs:
         dotnet-version: 7.0.x
     - name: Restore dependencies
       run: dotnet restore src
-    - name: Get outdated packages
+    - name: Scan and update outdated NuGet packages
       shell: pwsh
       run: |
         cd src 
@@ -35,3 +37,13 @@ jobs:
         {
           write-host "Result is too large to be assigned to an environment variable."
         }
+        $owner = "${{ matrix.repo }}".split('/')[0]
+        $repo = "${{ matrix.repo }}".split('/')[1]
+        $NuGetPayload = {
+          "User" = ${{ env.user }},
+          "Owner" = $owner,
+          "Repo" = $repo,
+          "JsonPayload" = $result,
+          "PayloadType" = "Outdated"
+        } | ConvertTo-Json
+        Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -Method POST -Body $NuGetPayload

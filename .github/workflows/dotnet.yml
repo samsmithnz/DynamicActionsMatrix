@@ -40,10 +40,10 @@ jobs:
         $owner = "${{ matrix.repo }}".split('/')[0]
         $repo = "${{ matrix.repo }}".split('/')[1]
         $NuGetPayload = {
-          "User" = "${{ env.user }}",
-          "Owner" = $owner,
-          "Repo" = $repo,
-          "JsonPayload" = $result,
-          "PayloadType" = "Outdated"
+          User = "${{ env.user }}",
+          Owner = $owner,
+          Repo = $repo,
+          JsonPayload = $result,
+          PayloadType = "Outdated"
         } | ConvertTo-Json
         Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -Method POST -Body $NuGetPayload

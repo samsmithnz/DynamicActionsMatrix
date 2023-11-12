@@ -43,11 +43,13 @@ jobs:
             {
               foreach ($project in $_.projects)
               {
+                write-host $project
+                write-host $project.frameworks.Count
                 $deprecatedCount += $project.frameworks.Count
               }
             }
           }
-          write-host "Deprecated results found: " + $deprecatedCount
+          write-host "Deprecated results found: $deprecatedCount"
         }
         $resultOutDated = dotnet list package --outdated --format json
         if ($resultOutDated.length -gt 40000)
@@ -66,7 +68,7 @@ jobs:
               }
             }
           }
-          write-host "Outdated results found: " + $outdatedCount
+          write-host "Outdated results found: $outdatedCount"
         }
         $resultVulnerable = dotnet list package --vulnerable --format json
         if ($resultVulnerable.length -gt 40000)
@@ -85,7 +87,7 @@ jobs:
               }
             }
           }
-          write-host "Vulnerable results found: " + $vulnerableCount
+          write-host "Vulnerable results found: $vulnerableCount"
         }
         $user = "${{ env.user }}"
         $owner = "${{ matrix.repo }}".split('/')[0]

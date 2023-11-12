@@ -13,7 +13,7 @@ jobs:
       user: samsmithnz
     strategy:
       matrix:
-        repo: ['samsmithnz/RepoAutomationUnitTests'] #, 'samsmithnz/RepoAutomation', 'samsmithnz/RepoGovernance']
+        repo: ['samsmithnz/RepoAutomationUnitTests', 'samsmithnz/RepoAutomation', 'samsmithnz/RepoGovernance']
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -41,14 +41,14 @@ jobs:
           $deprecatedCount = 0
           foreach ($project in ($resultDeprecated | ConvertFrom-Json).projects)
           {
-            write-host "Scanning project"
-            write-host $project
-            write-host $project.frameworks
-            write-host $project.frameworks.Count
+            # write-host "Scanning project"
+            # write-host $project
+            # write-host $project.frameworks
+            # write-host $project.frameworks.Count
             $deprecatedCount += $project.frameworks.Count
           }
           $resultDeprecated
-          write-host "Deprecated projects found: $($resultDeprecated.projects.Count)"
+          #write-host "Deprecated projects found: $($resultDeprecated.projects.Count)"
           write-host "Deprecated results found: $deprecatedCount"
         }
         $resultOutDated = dotnet list package --outdated --format json

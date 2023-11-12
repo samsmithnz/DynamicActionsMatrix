@@ -7,12 +7,16 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  processRepos:
+    name: Process repos
+    strategy:
+      matrix:
+        repo: ['samsmithnz/RepoAutomationUnitTests', 'samsmithnz/RepoAutomation', 'samsmithnz/RepoGovernance']
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
       with:
-        repository: 'samsmithnz/RepoAutomationUnitTests'
+        repository: ${{ matrix.version }}
         token: ${{ secrets.PAT_TOKEN }}
     - name: Setup .NET
       uses: actions/setup-dotnet@v3

@@ -45,6 +45,7 @@ jobs:
             write-host $project.frameworks.Count
             $deprecatedCount += $project.frameworks.Count
           }
+          write-host "Deprecated projects found: $($resultDeprecated.projects.Count)"
           write-host "Deprecated results found: $deprecatedCount"
         }
         $resultOutDated = dotnet list package --outdated --format json

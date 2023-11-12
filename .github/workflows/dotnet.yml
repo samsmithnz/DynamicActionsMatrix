@@ -38,16 +38,12 @@ jobs:
         else 
         {
           $deprecatedCount = 0
-          $resultDeprecated | ForEach-Object {
-            if ($_.name -eq "projects")
-            {
-              foreach ($project in $_.projects)
-              {
-                write-host $project
-                write-host $project.frameworks.Count
-                $deprecatedCount += $project.frameworks.Count
-              }
-            }
+          foreach ($project in $resultDeprecated.projects)
+          {
+            write-host "Scanning project"
+            write-host $project.path
+            write-host $project.frameworks.Count
+            $deprecatedCount += $project.frameworks.Count
           }
           write-host "Deprecated results found: $deprecatedCount"
         }

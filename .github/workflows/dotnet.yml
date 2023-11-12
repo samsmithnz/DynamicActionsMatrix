@@ -44,6 +44,7 @@ jobs:
           {
             write-host "Scanning project"
             write-host $project.path
+            write-host $project.frameworks
             write-host $project.frameworks.Count
             $deprecatedCount += $project.frameworks.Count
           }

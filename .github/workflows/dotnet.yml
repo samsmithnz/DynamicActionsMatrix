@@ -15,10 +15,9 @@ jobs:
       matrix:
         repo: ['samsmithnz/AzurePipelinesToGitHubActionsConverter','samsmithnz/AzurePipelinesToGitHubActionsConverterWeb',
         'samsmithnz/CustomQueue','samsmithnz/Dependabot-Configuration-Builder','samsmithnz/DotNetCensus','samsmithnz/DSPTree',
-        'samsmithnz/FactorySim','samsmithnz/FictionBook','samsmithnz/GitHubActionsDotNet','samsmithnz/OpinionatedSoftwareAdvice',
-        'samsmithnz/MermaidDotNet','samsmithnz/PuzzleSolver','samsmithnz/RepoAutomation','samsmithnz/RepoAutomationUnitTests',
-        'samsmithnz/RepoGovernance','samsmithnz/ResearchTree','samsmithnz/Sams2048','samsmithnz/SamsFeatureFlags',
-        'samsmithnz/samsmithnz','samsmithnz/SatisfactoryTree','samsmithnz/SamsDotNetSonarCloudAction','samsmithnz/TBS',
+        'samsmithnz/FactorySim','samsmithnz/GitHubActionsDotNet','samsmithnz/MermaidDotNet','samsmithnz/PuzzleSolver',
+        'samsmithnz/RepoAutomation','samsmithnz/RepoAutomationUnitTests','samsmithnz/RepoGovernance','samsmithnz/ResearchTree',
+        'samsmithnz/Sams2048','samsmithnz/SamsFeatureFlags','samsmithnz/SatisfactoryTree','samsmithnz/SamsDotNetSonarCloudAction',
         'samsmithnz/TurnBasedEngine','SamSmithNZ-dotcom/SamSmithNZ.com','SamSmithNZ-dotcom/MandMCounter',
         'DeveloperMetrics/DevOpsMetrics','DeveloperMetrics/deployment-frequency','DeveloperMetrics/lead-time-for-changes']
     runs-on: ubuntu-latest

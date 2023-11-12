@@ -26,7 +26,7 @@ jobs:
         dotnet-version: 7.0.x
     - name: Restore dependencies
       run: dotnet restore src
-    - name: Scan and update outdated NuGet packages
+    - name: Scan for NuGet packages needing action
       shell: pwsh
       run: |
         cd src 
@@ -37,17 +37,55 @@ jobs:
         }
         else 
         {
-          write-host "Deprecated results found: " + $resultDeprecated
+          $deprecatedCount = 0
+          $resultDeprecated | ForEach-Object {
+            if ($_.name -eq "projects")
+            {
+              foreach ($project in $_.projects)
+              {
+                $deprecatedCount += $project.frameworks.Count
+              }
+            }
+          }
+          write-host "Deprecated results found: " + $deprecatedCount
         }
         $resultOutDated = dotnet list package --outdated --format json
         if ($resultOutDated.length -gt 40000)
         {
           write-host "Outdated result is too large to be assigned to an environment variable."
         }
+        else 
+        {
+          $outdatedCount = 0
+          $resultOutdated | ForEach-Object {
+            if ($_.name -eq "projects")
+            {
+              foreach ($project in $_.projects)
+              {
+                $outdatedCount += $project.frameworks.Count
+              }
+            }
+          }
+          write-host "Outdated results found: " + $outdatedCount
+        }
         $resultVulnerable = dotnet list package --vulnerable --format json
         if ($resultVulnerable.length -gt 40000)
         {
           write-host "Vulnerable result is too large to be assigned to an environment variable."
+        }
+        else 
+        {
+          $vulnerableCount = 0
+          $resultVulnerable | ForEach-Object {
+            if ($_.name -eq "projects")
+            {
+              foreach ($project in $_.projects)
+              {
+                $vulnerableCount += $project.frameworks.Count
+              }
+            }
+          }
+          write-host "Vulnerable results found: " + $vulnerableCount
         }
         $user = "${{ env.user }}"
         $owner = "${{ matrix.repo }}".split('/')[0]

@@ -30,12 +30,12 @@ jobs:
       shell: pwsh
       run: |
         cd src 
-        $resultDeprecated = dotnet list package --deprecated --format jsonn
+        $resultDeprecated = dotnet list package --deprecated --format json
         if ($resultDeprecated.length -gt 40000)
         {
           write-host "Deprcated result is too large to be assigned to an environment variable."
         }
-        $resultOutDated = dotnet list package --outdated --format jsonn
+        $resultOutDated = dotnet list package --outdated --format json
         if ($resultOutDated.length -gt 40000)
         {
           write-host "Outdated result is too large to be assigned to an environment variable."

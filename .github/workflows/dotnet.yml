@@ -26,7 +26,7 @@ jobs:
       with:
         repository: ${{ matrix.repo }}
         token: ${{ secrets.PAT_TOKEN }}
-        path: repo2
+        path: newRepo
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -34,85 +34,92 @@ jobs:
     - name: Scan for NuGet packages needing action
       shell: pwsh
       run: |
-        cd repo2/src 
-        dotnet restore
-        #ls
-        $resultDeprecated = dotnet list package --deprecated --format json
-        if ($resultDeprecated.length -gt 40000)
+        if (Test-Path newRepo/src/*.sln -PathType Leaf)
         {
-          write-host "Deprecated result is too large to be assigned to an environment variable."
-        }
-        else 
-        {
-          $deprecatedCount = 0
-          foreach ($project in ($resultDeprecated | ConvertFrom-Json).projects)
+          cd newRepo/src 
+          dotnet restore
+          #ls
+          $resultDeprecated = dotnet list package --deprecated --format json
+          if ($resultDeprecated.length -gt 40000)
           {
-            # write-host "Scanning project"
-            # write-host $project
-            # write-host $project.frameworks
-            # write-host $project.frameworks.Count
-            $deprecatedCount += $project.frameworks.Count
+            write-host "Deprecated result is too large to be assigned to an environment variable."
           }
-          $resultDeprecated
-          #write-host "Deprecated projects found: $($resultDeprecated.projects.Count)"
-          write-host "Deprecated results found: $deprecatedCount"
-        }
-        $resultOutDated = dotnet list package --outdated --format json
-        if ($resultOutDated.length -gt 40000)
-        {
-          write-host "Outdated result is too large to be assigned to an environment variable."
-        }
-        else 
-        {
-          $outdatedCount = 0
-          foreach ($project in ($resultOutdated | ConvertFrom-Json).projects)
+          else 
           {
-            $outdatedCount += $project.frameworks.Count
+            $deprecatedCount = 0
+            foreach ($project in ($resultDeprecated | ConvertFrom-Json).projects)
+            {
+              # write-host "Scanning project"
+              # write-host $project
+              # write-host $project.frameworks
+              # write-host $project.frameworks.Count
+              $deprecatedCount += $project.frameworks.Count
+            }
+            $resultDeprecated
+            #write-host "Deprecated projects found: $($resultDeprecated.projects.Count)"
+            write-host "Deprecated results found: $deprecatedCount"
           }
-          write-host "Outdated results found: $outdatedCount"
-        }
-        $resultVulnerable = dotnet list package --vulnerable --format json
-        if ($resultVulnerable.length -gt 40000)
-        {
-          write-host "Vulnerable result is too large to be assigned to an environment variable."
-        }
-        else 
-        {
-          $vulnerableCount = 0
-          foreach ($project in ($resultVulnerable | ConvertFrom-Json).projects)          
+          $resultOutDated = dotnet list package --outdated --format json
+          if ($resultOutDated.length -gt 40000)
           {
-            $vulnerableCount += $project.frameworks.Count
+            write-host "Outdated result is too large to be assigned to an environment variable."
           }
-          write-host "Vulnerable results found: $vulnerableCount"
+          else 
+          {
+            $outdatedCount = 0
+            foreach ($project in ($resultOutdated | ConvertFrom-Json).projects)
+            {
+              $outdatedCount += $project.frameworks.Count
+            }
+            write-host "Outdated results found: $outdatedCount"
+          }
+          $resultVulnerable = dotnet list package --vulnerable --format json
+          if ($resultVulnerable.length -gt 40000)
+          {
+            write-host "Vulnerable result is too large to be assigned to an environment variable."
+          }
+          else 
+          {
+            $vulnerableCount = 0
+            foreach ($project in ($resultVulnerable | ConvertFrom-Json).projects)          
+            {
+              $vulnerableCount += $project.frameworks.Count
+            }
+            write-host "Vulnerable results found: $vulnerableCount"
+          }
+          $user = "${{ env.user }}"
+          $owner = "${{ matrix.repo }}".split('/')[0]
+          $repo = "${{ matrix.repo }}".split('/')[1]
+          #Deprecated packages
+          $NuGetDeprecatedPayload = @{
+            User = $user
+            Owner = $owner
+            Repo = $repo
+            JsonPayload = $resultDeprecated
+            PayloadType = "Deprecated"
+          } | ConvertTo-Json -Depth 5
+          Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetDeprecatedPayload
+          #Outdated packages
+          $NuGetOutdatedPayload = @{
+            User = $user
+            Owner = $owner
+            Repo = $repo
+            JsonPayload = $resultOutDated
+            PayloadType = "Outdated"
+          } | ConvertTo-Json -Depth 5
+          Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetOutdatedPayload
+          #Vulnerable packages        
+          $NuGetVulnerablePayload = @{
+            User = $user
+            Owner = $owner
+            Repo = $repo
+            JsonPayload = $resultVulnerable
+            PayloadType = "Vulnerable"
+          } | ConvertTo-Json -Depth 5
+          Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetVulnerablePayload
         }
-        $user = "${{ env.user }}"
-        $owner = "${{ matrix.repo }}".split('/')[0]
-        $repo = "${{ matrix.repo }}".split('/')[1]
-        #Deprecated packages
-        $NuGetDeprecatedPayload = @{
-          User = $user
-          Owner = $owner
-          Repo = $repo
-          JsonPayload = $resultDeprecated
-          PayloadType = "Deprecated"
-        } | ConvertTo-Json -Depth 5
-        Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetDeprecatedPayload
-        #Outdated packages
-        $NuGetOutdatedPayload = @{
-          User = $user
-          Owner = $owner
-          Repo = $repo
-          JsonPayload = $resultOutDated
-          PayloadType = "Outdated"
-        } | ConvertTo-Json -Depth 5
-        Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetOutdatedPayload
-        #Vulnerable packages        
-        $NuGetVulnerablePayload = @{
-          User = $user
-          Owner = $owner
-          Repo = $repo
-          JsonPayload = $resultVulnerable
-          PayloadType = "Vulnerable"
-        } | ConvertTo-Json -Depth 5
-        Invoke-WebRequest -Uri https://repogovernance-prod-eu-service.azurewebsites.net/api/SummaryItems/UpdateSummaryItemNuGetPackageStats -ContentType "application/json" -Method POST -Body $NuGetVulnerablePayload
-        
+        else
+        {
+          write-host "No .NET solution found"
+          write-error "No .NET solution found"
+        }

@@ -20,6 +20,7 @@ jobs:
       with:
         repository: ${{ matrix.repo }}
         token: ${{ secrets.PAT_TOKEN }}
+        path: repo2
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -29,7 +30,7 @@ jobs:
     - name: Scan for NuGet packages needing action
       shell: pwsh
       run: |
-        cd src 
+        cd repo2/src 
         $resultDeprecated = dotnet list package --deprecated --format json
         if ($resultDeprecated.length -gt 40000)
         {

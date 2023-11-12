@@ -38,7 +38,7 @@ jobs:
         else 
         {
           $deprecatedCount = 0
-          foreach ($project in $resultDeprecated.projects)
+          foreach ($project in ($resultDeprecated | ConvertFrom-Json).projects)
           {
             write-host "Scanning project"
             write-host $project.path
@@ -57,14 +57,9 @@ jobs:
         else 
         {
           $outdatedCount = 0
-          $resultOutdated | ForEach-Object {
-            if ($_.name -eq "projects")
-            {
-              foreach ($project in $_.projects)
-              {
-                $outdatedCount += $project.frameworks.Count
-              }
-            }
+          foreach ($project in ($resultOutdated | ConvertFrom-Json).projects)
+          {
+            $outdatedCount += $project.frameworks.Count
           }
           write-host "Outdated results found: $outdatedCount"
         }
@@ -76,14 +71,9 @@ jobs:
         else 
         {
           $vulnerableCount = 0
-          $resultVulnerable | ForEach-Object {
-            if ($_.name -eq "projects")
-            {
-              foreach ($project in $_.projects)
-              {
-                $vulnerableCount += $project.frameworks.Count
-              }
-            }
+          foreach ($project in ($resultVulnerable | ConvertFrom-Json).projects)          
+          {
+            $vulnerableCount += $project.frameworks.Count
           }
           write-host "Vulnerable results found: $vulnerableCount"
         }

@@ -19,7 +19,8 @@ jobs:
         'samsmithnz/RepoAutomation','samsmithnz/RepoAutomationUnitTests','samsmithnz/RepoGovernance',
         'samsmithnz/SamsFeatureFlags','samsmithnz/SatisfactoryTree','samsmithnz/SamsDotNetSonarCloudAction',
         'samsmithnz/TurnBasedEngine','SamSmithNZ-dotcom/SamSmithNZ.com','SamSmithNZ-dotcom/MandMCounter',
-        'DeveloperMetrics/DevOpsMetrics','DeveloperMetrics/deployment-frequency','DeveloperMetrics/lead-time-for-changes']
+        'DeveloperMetrics/deployment-frequency','DeveloperMetrics/lead-time-for-changes'] 
+        #'DeveloperMetrics/DevOpsMetrics',
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
